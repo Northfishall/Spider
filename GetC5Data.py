@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
+import sys
+sys.path.append(".")
 import SpiderLib
 import MongoDB
+import time
+import random
+import os
+from urllib.parse import quote
+import string
 
 '''
 BUFF data Type
@@ -34,27 +41,51 @@ https://www.c5game.com/dota/553443940-S.html
 https://www.c5game.com/dota/553443749-S.html
 
 https://www.c5game.com/dota.html?min=&max=&k=名称&rarity=&quality=unique&hero=&tag=&sort=&page=1
+
+https://www.c5game.com/dota.html?rarity=immortal&page=1&quality=unique
+
+https://www.c5game.com/dota.html?quality=unique&hero=&type=&exterior=&rarity=immortal&page=1
 '''
 
 
 def GetByPage():
-    for i in range (1,10):
-        url = "https://www.c5game.com/dota.html?rarity=immortal&page="+str(i)
+    for i in range (1,20):
+        #url = "https://www.c5game.com/dota.html?rarity=immortal&page="+str(i)
+        url = "https://www.c5game.com/dota.html?quality=unique&hero=&type=&exterior=&rarity=immortal&page="+str(i)
         web = SpiderLib.visitByLocalNet(url)
         f = open('d://c5Data'+str(i)+'.txt', 'wb')
         f.write(web.data)
         SpiderLib.getC5TextData(web,1)
+        time.sleep(random.randint(5,8))
 
-def GetByName(Name):
+def GetByName(Name,Index):
     url = "https://www.c5game.com/dota.html?min=&max=&k="+Name+"&rarity=&quality=unique&hero=&tag=&sort=&page=1"
+    url = quote(url, safe=string.printable)
+    print(url)
     web = SpiderLib.visitByLocalNet(url)
-    f = open('d://Search'+Name+'.txt', 'wb')
-    f.write(web.data)
-    SpiderLib.getC5TextData(web, 1)
+    if(web == "error"):
+        print("exit")
+        os._exit(0)
+    else:
+        f = open('d://Search'+Name+'.txt', 'wb')
+        f.write(web.data)
+        SpiderLib.getC5TextData(web,Index)
+
+def SearchByList(version,Index):
+    CollectionName = MongoDB.GetCollectionName(version)
+    print(CollectionName)
+    for i in CollectionName:
+        GetByName(i,Index)
+        time.sleep(random.randint(4,10))
+
+
+SearchByList(1,2)
 
 
 
+#CollectionName = MongoDB.SaveCollectionName("c5",1)
+#print(CollectionName)
 
 #GetByPage()
 
-GetByName("轮盘吉兆")
+#GetByName("轮盘吉兆",-1)
