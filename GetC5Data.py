@@ -70,7 +70,7 @@ def GetByName(Name,Index):
         f = open('d://Search'+Name+'.txt', 'wb')
         f.write(web.data)
         SpiderLib.getC5TextData(web,Index)
-
+##根据Name数据库中的列表进行搜索
 def SearchByList(version,Index):
     CollectionName = MongoDB.GetCollectionName(version)
     print(CollectionName)
@@ -79,8 +79,8 @@ def SearchByList(version,Index):
         time.sleep(random.randint(4,10))
 
 
-SearchByList(1,2)
-
+SearchByList(1,3)
+#MongoDB.ReadData("c5",2)
 
 
 #CollectionName = MongoDB.SaveCollectionName("c5",1)
