@@ -47,7 +47,9 @@ https://www.c5game.com/dota.html?rarity=immortal&page=1&quality=unique
 https://www.c5game.com/dota.html?quality=unique&hero=&type=&exterior=&rarity=immortal&page=1
 '''
 
-
+'''
+通过对整个页面进行搜索来获取所有的不朽名称
+'''
 def GetByPage():
     for i in range (1,20):
         #url = "https://www.c5game.com/dota.html?rarity=immortal&page="+str(i)
@@ -58,6 +60,10 @@ def GetByPage():
         SpiderLib.getC5TextData(web,1)
         time.sleep(random.randint(5,8))
 
+'''
+根据Name来进行爬取
+Index为存入数据库中的下标
+'''
 def GetByName(Name,Index):
     url = "https://www.c5game.com/dota.html?min=&max=&k="+Name+"&rarity=&quality=unique&hero=&tag=&sort=&page=1"
     url = quote(url, safe=string.printable)
@@ -70,7 +76,11 @@ def GetByName(Name,Index):
         f = open('d://Search'+Name+'.txt', 'wb')
         f.write(web.data)
         SpiderLib.getC5TextData(web,Index)
-##根据Name数据库中的列表进行搜索
+'''
+根据Name数据库中的列表进行爬取
+version指的是Name中的名称集合版本
+Index为存入的下标
+'''
 def SearchByList(version,Index):
     CollectionName = MongoDB.GetCollectionName(version)
     print(CollectionName)
@@ -78,14 +88,45 @@ def SearchByList(version,Index):
         GetByName(i,Index)
         time.sleep(random.randint(4,10))
 
+'''
+对Collection的Version进行更新
+去掉一些没有价值的Name
+判断策略在MongoDB.GetNewCollectionName中
+'''
+def NewCollection(dbData,dbName,MaxIndex,version):
+    Collection = MongoDB.GetNewCollectionName(dbData,MaxIndex)
+    print(Collection)
+    MongoDB.SetCollectionName(dbName,Collection,version)
 
-SearchByList(1,3)
-#MongoDB.ReadData("c5",2)
+
+def run():
+    version = 1
+    Index = 2
+    #获取第一版本名称
+    GetByPage()
+    #将第一版名称存入
+    MongoDB.SaveCollectionName("c5",version)
+
+    while 1==1:
+        time.sleep(random.randint(1180, 1220))
+        SearchByList(version,Index)
+        version = version+1
+        NewCollection("c5","Name",Index,version)
+        MongoDB.RenewDataDB("c5",version)
+        Index = Index +1
 
 
+#NewCollection("c5","Name",3,2)
+
+
+
+
+#SearchByList(1,3)
+#MongoDB.ReadData("c5",3)
+# data = MongoDB.GetNewCollectionName("c5",3)
+# print(data)
+# print("length:"+str(len(data)))
 #CollectionName = MongoDB.SaveCollectionName("c5",1)
 #print(CollectionName)
-
 #GetByPage()
-
 #GetByName("轮盘吉兆",-1)
