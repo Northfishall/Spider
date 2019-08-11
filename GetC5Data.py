@@ -55,8 +55,8 @@ def GetByPage():
         #url = "https://www.c5game.com/dota.html?rarity=immortal&page="+str(i)
         url = "https://www.c5game.com/dota.html?quality=unique&hero=&type=&exterior=&rarity=immortal&page="+str(i)
         web = SpiderLib.visitByLocalNet(url)
-        f = open('d://c5Data'+str(i)+'.txt', 'wb')
-        f.write(web.data)
+        #f = open('d://c5Data'+str(i)+'.txt', 'wb')
+        #f.write(web.data)
         SpiderLib.getC5TextData(web,1)
         time.sleep(random.randint(5,8))
 
@@ -73,8 +73,8 @@ def GetByName(Name,Index):
         print("exit")
         os._exit(0)
     else:
-        f = open('d://Search'+Name+'.txt', 'wb')
-        f.write(web.data)
+        #f = open('d://Search'+Name+'.txt', 'wb')
+        #f.write(web.data)
         SpiderLib.getC5TextData(web,Index)
 '''
 根据Name数据库中的列表进行爬取
@@ -99,14 +99,19 @@ def NewCollection(dbData,dbName,MaxIndex,version):
     MongoDB.SetCollectionName(dbName,Collection,version)
 
 
-def run():
+
+def init():
     version = 1
-    Index = 2
     #获取第一版本名称
     GetByPage()
     #将第一版名称存入
     MongoDB.SaveCollectionName("c5",version)
 
+
+
+def run():
+    version = 1
+    Index = 2
     while 1==1:
         time.sleep(random.randint(1180, 1220))
         SearchByList(version,Index)

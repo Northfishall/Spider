@@ -194,31 +194,43 @@ def GetNewCollectionName(dbName,MaxIndex):
             for x in result :
                 price.append(x["Price"])
                 number.append(x["Number"])
-        pro = 0
-        back = 0
+        ###取数量均值
+        allNumber = 0
+        for x in range(0,len(number)):
+            allNumber = allNumber+number[x]
+        avg = allNumber/len(number)
+        if(avg < 20):
+            continue
+
+        proPrice = 0
+        backPrice = 0
+        proNumber = 0
+        backNumber = 0
+
         for x in range(0,len(price)):
             if x == 0:
-                pro = price[x]
+                proPrice = price[x]
+                proNumber = number[x]
             elif x == 1:
-                back = price[x]
-                if pro >= back : ##降价
-                    diff = pro - back
-                    if diff/float(pro)>=0.3 :
+                backPrice = price[x]
+                if proPrice >= backPrice : ##降价
+                    diffPrice = proPrice - backPrice
+                    if diffPrice/float(proPrice)>=0.3 :
                         flag = 1
                 else : #涨价
-                    diff = back - pro
-                    if diff/float(pro)>=0.3 :
+                    diffPrice = backPrice - proPrice
+                    if diffPrice/float(proPrice)>=0.3 :
                         flag = 1
             else:
-                pro = back
-                back = price[x]
-                if pro >= back : ##降价
-                    diff = pro - back
-                    if diff/float(pro)>=0.3 :
+                proPrice = backPrice
+                backPrice = price[x]
+                if proPrice >= backPrice : ##降价
+                    diffPrice = proPrice - backPrice
+                    if diffPrice/float(proPrice)>=0.3 :
                         flag = 1
                 else : #涨价
-                    diff = back - pro
-                    if diff/float(pro)>=0.3 :
+                    diffPrice = backPrice - proPrice
+                    if diffPrice/float(proPrice)>=0.3 :
                         flag = 1
         pro = 0
         back = 0
