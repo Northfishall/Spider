@@ -199,7 +199,11 @@ def GetNewCollectionName(dbName,MaxIndex):
         for x in range(0,len(number)):
             allNumber = allNumber+number[x]
         avg = allNumber/len(number)
-        if(avg < 20):
+        if avg < 20:
+            continue
+        #当数据量小于5时候不做修改 只有数量小于20的才会记性修改
+        if MaxIndex <=5 :
+            NewCollectionName.append(i)
             continue
 
         proPrice = 0
@@ -246,7 +250,8 @@ def GetNewCollectionName(dbName,MaxIndex):
                 #     avgPrice = avgPrice + diffPrice/float(proPrice)
         avgNumber =avgNumber/float(len(number)-1)
         avgPrice = avgPrice/float(len(price)-1)
-        if avgNumber >= 25 and avgPrice>=0.05 :
+        #数量和价格平均波动大于5%
+        if (avgNumber >= 0.05 or avgPrice>=0.05)  :
             flag = 1
 
         if flag == 1 :

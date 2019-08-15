@@ -95,9 +95,10 @@ def SearchByList(version,Index):
 判断策略在MongoDB.GetNewCollectionName中
 '''
 def NewCollection(dbData,dbName,MaxIndex,version):
-    Collection = MongoDB.GetNewCollectionName(dbData,MaxIndex)
-    print(Collection)
-    MongoDB.SetCollectionName(dbName,Collection,version)
+        Collection = MongoDB.GetNewCollectionName(dbData,MaxIndex)
+        print(Collection)
+        MongoDB.SetCollectionName(dbName,Collection,version)
+
 
 
 
@@ -114,7 +115,7 @@ def run():
     version = 1
     Index = 2
     while 1 == 1:
-        time.sleep(random.randint(2180, 2220))
+        time.sleep(random.randint(2200, 3200))
         SearchByList(version,Index)
         version = version+1
         NewCollection("c5","Name",Index,version)
