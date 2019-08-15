@@ -111,15 +111,16 @@ def init():
 
 
 def run():
-    version = 2
-    Index = 3
-    while 1==1:
-        time.sleep(random.randint(1180, 1220))
+    version = 1
+    Index = 2
+    while 1 == 1:
+        time.sleep(random.randint(2180, 2220))
         SearchByList(version,Index)
         version = version+1
         NewCollection("c5","Name",Index,version)
         MongoDB.RenewDataDB("c5",version)
         Index = Index +1
+
 
 
 #NewCollection("c5","Name",3,2)
