@@ -218,3 +218,19 @@ def getC5TextData(web,index):
         MongoDB.insert("c5",name,price,number,index)
         #MongoDB.SaveName(name)
         #数据处理之后将其存入数据库中
+
+
+'''
+Html页面获取Nice
+'''
+def getNiceTextData(web,index):
+    req = r'<div class="sneakerItem">(.+?)</div>'
+    name = r'<div class="bottom">(.+?)</div>'
+    number = r'<div class="count">(.+?)</div>'
+    price = r'<div class="num">(.+?[^0-9])</div>'
+
+    matchlist = re.findall(req, web.data.decode("UTF-8"), re.S)
+    for i in matchlist:
+        name = re.findall(name,i,re.S)[0]
+        price = re.findall(price, i, re.S)[0]
+        number = re.findall(number, i, re.S)[0]
