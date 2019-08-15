@@ -1,5 +1,5 @@
 import pymongo
-
+import math
 client = pymongo.MongoClient(host="localhost",port=27017)
 
 def insert(DBname,Name,Price,Number,Index):
@@ -206,48 +206,49 @@ def GetNewCollectionName(dbName,MaxIndex):
         backPrice = 0
         proNumber = 0
         backNumber = 0
-
+        avgPrice = 0
+        avgNumber = 0
         for x in range(0,len(price)):
             if x == 0:
                 proPrice = price[x]
                 proNumber = number[x]
             elif x == 1:
                 backPrice = price[x]
-                if proPrice >= backPrice : ##降价
-                    diffPrice = proPrice - backPrice
-                    if diffPrice/float(proPrice)>=0.3 :
-                        flag = 1
-                else : #涨价
-                    diffPrice = backPrice - proPrice
-                    if diffPrice/float(proPrice)>=0.3 :
-                        flag = 1
+                backNumber = number[x]
+                avgPrice =avgPrice + math.fabs(proPrice - backPrice)/float(proPrice)
+                avgNumber = avgNumber + math.abs(proNumber - backNumber)
+
+                # if proPrice >= backPrice : ##降价
+                #     diffPrice = proPrice - backPrice
+                #     avgPrice = avgPrice + diffPrice/float(proPrice)
+                # else : #涨价
+                #     diffPrice = backPrice - proPrice
+                #     avgPrice = avgPrice + diffPrice/float(proPrice)
+                # if proNumber >= backNumber:
+                #     diffNumber = proNumber - backNumber
+                #     avgNumber = avgNumber + diffNumber
+                # else :
+                #     diffNumber = backNumber - proNumber
+                #     avgNumber =
             else:
                 proPrice = backPrice
                 backPrice = price[x]
-                if proPrice >= backPrice : ##降价
-                    diffPrice = proPrice - backPrice
-                    if diffPrice/float(proPrice)>=0.3 :
-                        flag = 1
-                else : #涨价
-                    diffPrice = backPrice - proPrice
-                    if diffPrice/float(proPrice)>=0.3 :
-                        flag = 1
-        pro = 0
-        back = 0
-        for z in range(0,len(number)):
-            if z == 0:
-                pro = number[z]
-            elif z == 1:
-                back = number[z]
-                diff = pro - back
-                if(abs(diff)>20 and pro >20 and back >20):
-                    flag = 1
-            else:
-                pro = back
-                back = number[z]
-                diff = pro - back
-                if(abs(diff)>20 and pro >20 and back >20):
-                    flag = 1
+                proNumber = backNumber
+                backNumber = number[x]
+                avgPrice =avgPrice + math.fabs(proPrice - backPrice)/float(proPrice)
+                avgNumber = avgNumber + math.abs(proNumber - backNumber)
+
+                # if proPrice >= backPrice : ##降价
+                #     diffPrice = proPrice - backPrice
+                #     avgPrice = avgPrice + diffPrice/float(proPrice)
+                # else : #涨价
+                #     diffPrice = backPrice - proPrice
+                #     avgPrice = avgPrice + diffPrice/float(proPrice)
+        avgNumber =avgNumber/float(len(number)-1)
+        avgPrice = avgPrice/float(len(price)-1)
+        if avgNumber >= 25 and avgPrice>=0.05 :
+            flag = 1
+
         if flag == 1 :
             NewCollectionName.append(i)
 
