@@ -1,5 +1,6 @@
 import pymongo
 import math
+import sendemail
 client = pymongo.MongoClient(host="localhost",port=27017)
 
 def insert(DBname,Name,Price,Number,Index):
@@ -183,6 +184,8 @@ def GetNewCollectionName(dbName,MaxIndex):
     db = client[dbName]
     collectionName = db.list_collection_names(session=None)
     NewCollectionName = []
+    if MaxIndex > 5 :
+        sendemail.SendToMe("监控目录",collectionName)
     for i in collectionName:
         flag = 0
         price = []
@@ -251,7 +254,7 @@ def GetNewCollectionName(dbName,MaxIndex):
         avgNumber =avgNumber/float(len(number)-1)
         avgPrice = avgPrice/float(len(price)-1)
         #数量和价格平均波动大于5%
-        if (avgNumber >= 0.05 or avgPrice>=0.05)  :
+        if (avgNumber >= 0.05 and avgPrice>=0.05)  :
             flag = 1
 
         if flag == 1 :
