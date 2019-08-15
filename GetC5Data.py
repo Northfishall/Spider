@@ -8,6 +8,7 @@ import random
 import os
 from urllib.parse import quote
 import string
+import sendemail
 
 '''
 BUFF data Type
@@ -110,8 +111,8 @@ def init():
 
 
 def run():
-    version = 1
-    Index = 2
+    version = 2
+    Index = 3
     while 1==1:
         time.sleep(random.randint(1180, 1220))
         SearchByList(version,Index)

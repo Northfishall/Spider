@@ -216,5 +216,5 @@ def getC5TextData(web,index):
         number = re.findall(soleR,numberO)[0]
         print(name)
         MongoDB.insert("c5",name,price,number,index)
-        MongoDB.SaveName(name)
+        #MongoDB.SaveName(name)
         #数据处理之后将其存入数据库中
