@@ -121,6 +121,8 @@ def run():
         NewCollection("c5","Name",Index,version)
         MongoDB.RenewDataDB("c5",version)
         Index = Index +1
+        if version % 5 == 0:
+            time.sleep(random.randint(7200,10800))
 
 
 

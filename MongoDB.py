@@ -184,12 +184,12 @@ def GetNewCollectionName(dbName,MaxIndex):
     db = client[dbName]
     collectionName = db.list_collection_names(session=None)
     NewCollectionName = []
-    if MaxIndex > 5 :
-        sendemail.SendToMe("监控目录",collectionName)
+    EmailBody = []
     for i in collectionName:
         flag = 0
         price = []
         number = []
+        OneBody =[]
         for index in range(1,MaxIndex+1):
             collection = db[i]
             query = {"Index":index}
@@ -197,6 +197,13 @@ def GetNewCollectionName(dbName,MaxIndex):
             for x in result :
                 price.append(x["Price"])
                 number.append(x["Number"])
+        ##构建构建内容 包括名称价格等信息
+        if MaxIndex > 5 :
+            Email = str(i)+"\n"
+            EmailPric = "Price:"+"-".join(price)+"\n"
+            EmailNumber = "Number"+"-".join(number)+"\n"
+            Email = Email + EmailPric + EmailNumber
+            OneBody.append(Email)
         ###取数量均值
         allNumber = 0
         for x in range(0,len(number)):
@@ -204,8 +211,8 @@ def GetNewCollectionName(dbName,MaxIndex):
         avg = allNumber/len(number)
         if avg < 20:
             continue
-        #当数据量小于5时候不做修改 只有数量小于20的才会记性修改
-        if MaxIndex <=5 :
+        #当数据量小于5时候不做修改 只有数量小于20的才会进行修改
+        if MaxIndex <= 5:
             NewCollectionName.append(i)
             continue
 
@@ -260,6 +267,8 @@ def GetNewCollectionName(dbName,MaxIndex):
         if flag == 1 :
             NewCollectionName.append(i)
 
+    if MaxIndex > 5 :
+        sendemail.SendToMe("监控目录","\n".join(EmailBody))
     return NewCollectionName
 
 '''
