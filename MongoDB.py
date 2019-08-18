@@ -240,7 +240,7 @@ def GetNewCollectionName(dbName,MaxIndex):
                 backPrice = price[x]
                 backNumber = number[x]
                 avgPrice =avgPrice + math.fabs(proPrice - backPrice)/float(proPrice)
-                avgNumber = avgNumber + math.abs(proNumber - backNumber)
+                avgNumber = avgNumber + abs(proNumber - backNumber)
 
                 # if proPrice >= backPrice : ##降价
                 #     diffPrice = proPrice - backPrice
@@ -260,7 +260,7 @@ def GetNewCollectionName(dbName,MaxIndex):
                 proNumber = backNumber
                 backNumber = number[x]
                 avgPrice =avgPrice + math.fabs(proPrice - backPrice)/float(proPrice)
-                avgNumber = avgNumber + math.abs(proNumber - backNumber)
+                avgNumber = avgNumber + abs(proNumber - backNumber)
 
                 # if proPrice >= backPrice : ##降价
                 #     diffPrice = proPrice - backPrice
