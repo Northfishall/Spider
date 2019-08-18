@@ -185,11 +185,11 @@ def GetNewCollectionName(dbName,MaxIndex):
     collectionName = db.list_collection_names(session=None)
     NewCollectionName = []
     EmailBody = []
+    mailFlag = 0
     for i in collectionName:
         price = []
         number = []
         OneBody =[]
-        mailFlag = 0
         for index in range(1,MaxIndex+1):
             collection = db[i]
             query = {"Index":index}
@@ -334,4 +334,4 @@ def RenewDataDB(dbData,version):
             mycol.drop()
 
 
-GetNewCollectionName("c5",3)
+#GetNewCollectionName("c5",3)
