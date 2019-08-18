@@ -199,11 +199,21 @@ def GetNewCollectionName(dbName,MaxIndex):
                 number.append(x["Number"])
         ##构建构建内容 包括名称价格等信息
         if MaxIndex > 5 :
-            Email = str(i)+"\n"
-            EmailPric = "Price:"+"-".join(price)+"\n"
-            EmailNumber = "Number"+"-".join(number)+"\n"
+            Email = str(i)+"    "
+            EmailPric = "Price :"
+            EmailNumber = "Number:"
+            for z in range (0,len(price)):
+                EmailPric = EmailPric + "   "+str(price[z])
+                EmailNumber = EmailNumber + "   " + str(number[z])
+            #EmailPric = "Price:"+"-".join(str(price))+"\n"
+            #EmailNumber = "Number"+"-".join(str(number))+"\n"
             Email = Email + EmailPric + EmailNumber
             OneBody.append(Email)
+            EmailBody.append(OneBody)
+            print(Email)
+            print(EmailPric)
+            print(EmailNumber)
+            print(OneBody)
         ###取数量均值
         allNumber = 0
         for x in range(0,len(number)):
@@ -266,9 +276,17 @@ def GetNewCollectionName(dbName,MaxIndex):
 
         if flag == 1 :
             NewCollectionName.append(i)
+            EmailBody.append(OneBody)
 
     if MaxIndex > 5 :
-        sendemail.SendToMe("监控目录","\n".join(EmailBody))
+        Emailresult = ""
+        for x in range(0,len(EmailBody)):
+            Emailresult =Emailresult + str(EmailBody[x])+"      "
+        print(Emailresult)
+        sendemail.SendToMe("监控目录",Emailresult)
+        #print(EmailBody)
+    #print("NewCollections")
+    #print(NewCollectionName)
     return NewCollectionName
 
 '''
@@ -286,3 +304,6 @@ def RenewDataDB(dbData,version):
             mydb = client[dbData]
             mycol = mydb[i]
             mycol.drop()
+
+
+GetNewCollectionName("c5",3)

@@ -112,8 +112,8 @@ def init():
 
 
 def run():
-    version = 1
-    Index = 2
+    version = 5
+    Index = 7
     while 1 == 1:
         time.sleep(random.randint(2200, 3200))
         SearchByList(version,Index)

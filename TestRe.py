@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+import nice
 import MongoDB
 
 #Testfile = open("d://c5Data1.txt","r",encoding="UTF-8").read()
@@ -45,19 +46,15 @@ price = r'<div class="num">(.+?)</div></div>'
 id = r'gid="(.+?)"'
 
 matchlist = re.findall(req,Testfile, re.S)
-index = 0
 for i in matchlist:
-    print (i)
-    if index == 1:
-        index = index +1
-        continue
-    print(re.findall(id,i,re.S))
-    id = re.findall(id, i, re.S)[0]
-    price = re.findall(price, i, re.S)[0]
-    name = re.findall(name, i, re.S)[0]
-    number = re.findall(number, i, re.S)[0]
-    print("Name:"+name)
-    print("Price:"+price)
-    print("Number:"+number)
-    print("ID:"+id)
-    index = index +1
+    print(i)
+for i in matchlist:
+    idR = re.findall(id, i, re.S)[0]
+    priceR = re.findall(price, i, re.S)[0]
+    nameR = re.findall(name, i, re.S)[0]
+    numberR = re.findall(number, i, re.S)[0]
+    print("Name:"+nameR)
+    print("Price:"+priceR)
+    print("Number:"+numberR)
+    print("ID:"+idR)
+    MongoDB.insert("nice", nameR, priceR, numberR, 1)

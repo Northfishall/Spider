@@ -214,7 +214,7 @@ def getC5TextData(web,index):
         #numberO 中带有中文描述符 不是纯数字
         numberO = re.findall(numberR, i, re.S)[0]
         number = re.findall(soleR,numberO)[0]
-        print(name)
+        #print(name)
         MongoDB.insert("c5",name,price,number,index)
         #MongoDB.SaveName(name)
         #数据处理之后将其存入数据库中
@@ -224,13 +224,15 @@ def getC5TextData(web,index):
 Html页面获取Nice
 '''
 def getNiceTextData(web,index):
-    req = r'<div class="sneakerItem">(.+?)</div>'
-    name = r'<div class="bottom">(.+?)</div>'
-    number = r'<div class="count">(.+?)</div>'
-    price = r'<div class="num">(.+?[^0-9])</div>'
-
+    req = r'<div class="sneakerItem"(.+?)</div></div></div>'
+    name = r'<div class="bottom">(.+?)$'
+    number = r'<div class="count">(.+?)[^0-9]+</div></div>'
+    price = r'<div class="num">(.+?)</div></div>'
+    id = r'gid="(.+?)"'
     matchlist = re.findall(req, web.data.decode("UTF-8"), re.S)
     for i in matchlist:
-        name = re.findall(name,i,re.S)[0]
-        price = re.findall(price, i, re.S)[0]
-        number = re.findall(number, i, re.S)[0]
+        nameR = re.findall(name,i,re.S)[0]
+        priceR = re.findall(price, i, re.S)[0]
+        numberR = re.findall(number, i, re.S)[0]
+        idR = re.findall(id,i,re.S)[0]
+        MongoDB.insert("nice",nameR,priceR,numberR,index)
