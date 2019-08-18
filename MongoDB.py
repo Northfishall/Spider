@@ -186,10 +186,10 @@ def GetNewCollectionName(dbName,MaxIndex):
     NewCollectionName = []
     EmailBody = []
     for i in collectionName:
-        flag = 0
         price = []
         number = []
         OneBody =[]
+        mailFlag = 0
         for index in range(1,MaxIndex+1):
             collection = db[i]
             query = {"Index":index}
@@ -198,6 +198,7 @@ def GetNewCollectionName(dbName,MaxIndex):
                 price.append(x["Price"])
                 number.append(x["Number"])
         ##构建构建内容 包括名称价格等信息
+        '''
         if MaxIndex > 5 :
             Email = str(i)+"    "
             EmailPric = "Price :"
@@ -214,6 +215,7 @@ def GetNewCollectionName(dbName,MaxIndex):
             print(EmailPric)
             print(EmailNumber)
             print(OneBody)
+        '''
         ###取数量均值
         allNumber = 0
         for x in range(0,len(number)):
@@ -239,8 +241,14 @@ def GetNewCollectionName(dbName,MaxIndex):
             elif x == 1:
                 backPrice = price[x]
                 backNumber = number[x]
-                avgPrice =avgPrice + math.fabs(proPrice - backPrice)/float(proPrice)
-                avgNumber = avgNumber + abs(proNumber - backNumber)
+                if proPrice == backPrice:
+                    avgPrice = avgPrice
+                else:
+                    avgPrice =avgPrice + math.fabs(proPrice - backPrice)/float(proPrice)
+                if proNumber == backNumber:
+                    avgNumber = avgNumber
+                else:
+                    avgNumber = avgNumber + abs(proNumber - backNumber)
 
                 # if proPrice >= backPrice : ##降价
                 #     diffPrice = proPrice - backPrice
@@ -259,26 +267,46 @@ def GetNewCollectionName(dbName,MaxIndex):
                 backPrice = price[x]
                 proNumber = backNumber
                 backNumber = number[x]
-                avgPrice =avgPrice + math.fabs(proPrice - backPrice)/float(proPrice)
-                avgNumber = avgNumber + abs(proNumber - backNumber)
-
+                if proPrice == backPrice:
+                    avgPrice = avgPrice
+                else:
+                    avgPrice =avgPrice + math.fabs(proPrice - backPrice)/float(proPrice)
+                if proNumber == backNumber:
+                    avgNumber = avgNumber
+                else:
+                    avgNumber = avgNumber + abs(proNumber - backNumber)
+                #邮件触发条件改为最新一次数据的变动达到阈值之后发送
+                if x == len(price)-1:
+                    if math.fabs(proPrice - backPrice)/float(proPrice)>0.05 or abs(proNumber - backNumber)>20:
+                        ##符合条件发送邮件
+                        mailFlag = 1
+                        Email = str(i) + "    "
+                        EmailPric = "Price :"
+                        EmailNumber = "Number:"
+                        EmailPric = EmailPric + "   " + str(proPrice) + "——>"+str(backPrice)
+                        EmailNumber = EmailNumber + "   " + str(proNumber) + "——>"+ str(backNumber)
+                        # EmailPric = "Price:"+"-".join(str(price))+"\n"
+                        # EmailNumber = "Number"+"-".join(str(number))+"\n"
+                        Email = Email + EmailPric + EmailNumber
+                        OneBody.append(Email)
+                        EmailBody.append(OneBody)
                 # if proPrice >= backPrice : ##降价
                 #     diffPrice = proPrice - backPrice
                 #     avgPrice = avgPrice + diffPrice/float(proPrice)
                 # else : #涨价
                 #     diffPrice = backPrice - proPrice
                 #     avgPrice = avgPrice + diffPrice/float(proPrice)
-        avgNumber =avgNumber/float(len(number)-1)
-        avgPrice = avgPrice/float(len(price)-1)
-        #数量和价格平均波动大于5%
-        if (avgNumber >= 0.05 and avgPrice>=0.05)  :
-            flag = 1
-
-        if flag == 1 :
+        if len(number) == 1 :
+            print("new item")
+        else :
+            avgNumber =avgNumber/float(len(number)-1)
+            avgPrice = avgPrice/float(len(price)-1)
+        #数量和价格平均波动大于2%
+        if (avgNumber >= 0.01 and avgPrice>=0.01)  :
             NewCollectionName.append(i)
-            EmailBody.append(OneBody)
 
-    if MaxIndex > 5 :
+
+    if mailFlag == 1 :
         Emailresult = ""
         for x in range(0,len(EmailBody)):
             Emailresult =Emailresult + str(EmailBody[x])+"      "
