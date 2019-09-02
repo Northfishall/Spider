@@ -125,13 +125,20 @@ def run():
             time.sleep(random.randint(7200,10800))
 
 
+def GetByList(Dlist):
+    Index = 1
+    while 1 == 1 :
+        time.sleep(random.randint(555,3333))
+        for i in Dlist:
+            GetByName(i,Index)
+            time.sleep(random.randint(60,120))
+        Index = Index + 1
 
 
 #NewCollection("c5","Name",3,2)
 
-
-
-
+List = ['夺命尖齿','宝蓝幽谷君王','耳语之系斗篷','寒冰菁华','混沌裁决','幽魂之缚','2019年珍宝之瓶']
+GetByList(List)
 #SearchByList(1,3)
 #MongoDB.ReadData("c5",3)
 # data = MongoDB.GetNewCollectionName("c5",3)
