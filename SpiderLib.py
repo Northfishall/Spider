@@ -11,6 +11,8 @@ import MongoDB
 from PIL import Image
 from urllib3.contrib.socks import SOCKSProxyManager
 
+
+#just a test
 url = "https://game.nihaoma.top/t1/?template=blue&token=b595fa57&CateID=10#/"
 
 
