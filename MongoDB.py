@@ -334,4 +334,32 @@ def RenewDataDB(dbData,version):
             mycol.drop()
 
 
-#GetNewCollectionName("c5",3)
+'''
+根据collectionName 读取对应的数据返回 Number
+'''
+def GetDataByCollection(dbName,collectionName):
+    db = client[dbName]
+    Resutl = []
+    for i in collectionName:
+        print (i)
+        price = []
+        print(price)
+        number = []
+        package = []
+        for j in range(0,db[i].find().count()):
+            temp = db[i].find({},{"Number":1,"Price":1})[j]
+            #print (temp)
+            number.append(temp['Number'])
+            price.append(temp['Price'])
+        package.append(number)
+        package.append(price)
+        Resutl.append(package)
+        # for index in range(1,MaxIndex+1):
+        #     collection = db[i]
+        #     query = {"Index":index}
+        #     result = collection.find(query,{"_id":0,"Index":0})
+        #     for x in result :
+        #         price.append(x["Price"])
+        #         number.append(x["Number"])
+    return Resutl
+
