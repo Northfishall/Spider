@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import urllib3
+import traceback
 import json
 import certifi
 import random
@@ -21,9 +22,10 @@ http = urllib3.PoolManager(
     ca_certs = certifi.where()
 )
 ######## 访问某些网站使用本地ssr代理
-proxy = urllib3.ProxyManager('http://localhost:1080')
+proxy = urllib3.ProxyManager('http://127.0.0.1:1087',
+                             'https://127.0.0.1:1087')
 
-sockproxy = SOCKSProxyManager('socks5://localhost:1080')
+sockproxy = SOCKSProxyManager('socks5://localhost:1086')
 
 
 
@@ -31,21 +33,35 @@ sockproxy = SOCKSProxyManager('socks5://localhost:1080')
 通过ssr代理访问 端口1080 
 无Referer
 '''
+# def visitByProxy(url):
+#     try:
+#         web = proxy.request('GET', url,
+#                                  headers={
+#                                      'User-Agent':
+#                                          'ozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.1 Safari/605.1.15'
+#                                      , 'accept-language': "zh-CN,zh;q=0.9,zh-TW;q=0.8",
+#                                      "Host": "www.google.com",
+#                                       'Referer':" https://www.google.com/"
+#                                  })
+#     #except BaseException:
+#     except Exception:
+#
+#         print(Exception)
+#         print("error")
+#         return "error"
+#     else:
+#         print(web.status)
+#         return web
+#
 def visitByProxy(url):
-    try:
-        web = proxy.request('GET', url,
-                                 headers={
-                                     'User-Agent':
-                                         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36 LBBROWSER'
-                                     , 'accept-language': "zh-CN,zh;q=0.9,zh-TW;q=0.8"
-                                     # 'Referer':url
-                                 })
-    except BaseException:
-        print("error")
-        return "error"
-    else:
-        print(web.status)
-        return web
+    web = proxy.request('GET', url,
+                            headers={
+                                'User-Agent':
+                                    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36'
+                                , 'accept-language': "zh-CN,zh;q=0.9,zh-TW;q=0.8",
+                                #"Host": "www.google.com"
+                                #'Referer': " https://www.google.com/"
+                            })
 
 
 
@@ -81,9 +97,10 @@ def visitByProxyRef(url , Referer):
                                 'User-Agent':
                                     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36 LBBROWSER'
                                  ,'Referer': Referer
-                                , 'accept-language': "zh-CN,zh;q=0.9,zh-TW;q=0.8"
+                                , 'accept-language': "zh-CN"
                             })
     except BaseException:
+        print()
         print("error")
         return "error"
     else:

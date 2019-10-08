@@ -11,6 +11,9 @@ import string
 import sendemail
 
 '''
+
+<div class="fl ellip oBrLN" data-original-name="屠呦呦">屠呦呦</div>
+
 BUFF data Type
 <a href="/market/goods?goods_id=7903&amp;from=market#tab=selling" title="铭刻 噬魔之王">
 <strong class="f_Strong">￥137</strong>
@@ -128,7 +131,7 @@ def run():
 def GetByList(Dlist):
     Index = 1
     while 1 == 1 :
-        time.sleep(random.randint(555,3333))
+        time.sleep(random.randint(5,15))
         for i in Dlist:
             GetByName(i,Index)
             time.sleep(random.randint(60,120))
