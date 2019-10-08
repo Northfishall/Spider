@@ -64,6 +64,9 @@ def Begin(url):
     ####获取相关节点
     matchlistName = re.findall(reqName, web.data.decode("UTF-8"), re.S)
     matchlistUrl = re.findall(reqUrl, web.data.decode("UTF-8"), re.S)
+    #由于url的格式相同 会获取下方热搜的url 导致混淆 
+    for i in range(len(matchlistName),len(matchlistUrl)):
+        del matchlistUrl[i]
     ConnectLength.append(len(matchlistName))
     NameQueue = NameQueue + matchlistName
     UrlQueue = UrlQueue + matchlistUrl
