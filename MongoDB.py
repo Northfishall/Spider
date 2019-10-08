@@ -3,6 +3,11 @@ import math
 import sendemail
 client = pymongo.MongoClient(host="localhost",port=27017)
 
+def insertList(DBname,Name,Data):
+    db = client[DBname]
+    collection = db[Name]
+    result = collection.insert({"Map":Data})
+    return result
 
 def insertDictionary(DBname,Name,Data):
     db = client[DBname]

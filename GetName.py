@@ -3,7 +3,9 @@ import SpiderLib
 import time
 import re
 import MongoDB
-
+import time
+import random
+from urllib.parse import quote
 #{'rsv_re_ename':'蒋英','rsv_re_uri':'7166223'}
 #https://www.google.com/search?sxsrf=ACYBGNSjEVQS_O1HOnAVzwVnKBUUyojClA%3A1569981999765&ei=LwaUXc6mLvHUmAWilJb4Bw&q=howt&oq=howt&gs_l=psy-ab.3..35i362i39l10.12607.14238..14462...3.0..1.348.1389.0j3j2j1......0....1..gws-wiz.....10..35i39j0j0i12j0i203j0i10.yVHFJHa67Y8&ved=0ahUKEwiO-pjbvvzkAhVxKqYKHSKKBX8Q4dUDCAo&uact=5
 #req = r'<div class="fl ellip oBrLN" data-original-name="(.+?)">'
@@ -41,7 +43,7 @@ def Begin(url):
     mapIndex = 2
     NameList = ["钱学森"]
     mapName = {"钱学森":"1"}
-    ConnectionRelationship = {}
+    ConnectionRelationship = []
     NameQueue = []
     UrlQueue = []
     ConnectLength = []
@@ -54,6 +56,8 @@ def Begin(url):
     web = SpiderLib.visitByLocalNet(url)
     matchlistbaike = re.findall(reqBaike, web.data.decode("UTF-8"), re.S)
     urlbaike = "https://baike.baidu.com" + matchlistbaike[0]
+    print(urlbaike)
+    urlbaike = quote(urlbaike,safe='/:?=&$@+,;%')
     info = GetBaikeData(urlbaike, 1)
     MongoDB.insertDictionary("Network", "Information", info)
     ### 写入数据库
@@ -64,6 +68,11 @@ def Begin(url):
     NameQueue = NameQueue + matchlistName
     UrlQueue = UrlQueue + matchlistUrl
     while 1==1:
+        print(mapName)
+        print(ConnectionRelationship)
+        if len(NameQueue)==0 :
+            break
+        time.sleep(random.randint(2,10))
         currentNode = CurrentName[0]
         currentIndex = mapName[currentNode]
         currentLength = ConnectLength[0]
@@ -73,30 +82,37 @@ def Begin(url):
             if NameQueue[0] in NameList:
                 ###之前已经获取过数据所以直接添加边即可
                 indexB = mapName[NameQueue[0]]
-                ConnectionRelationship[currentIndex] = indexB
-            elif mapIndex>120:
+                ConnectionRelationship.append([currentIndex,indexB])
+            elif mapIndex>10:
+                time.sleep(random.randint(1, 3))
                 url = "https://www.baidu.com" + UrlQueue[0]
+                print(NameQueue[0])
+                print(UrlQueue[0])
+                url = quote(url, safe='/:?=&$@+,;%')
                 web = SpiderLib.visitByLocalNet(url)
                 # 查询百度百科数据然后进行存储
                 matchlistbaike = re.findall(reqBaike, web.data.decode("UTF-8"), re.S)
                 urlbaike = "https://baike.baidu.com" + matchlistbaike[0]
+                urlbaike = quote(urlbaike,safe='/:?=&$@+,;%')
                 info = GetBaikeData(urlbaike, mapIndex)
                 MongoDB.insertDictionary("Network", "Information", info)
                 #添加边
-                ConnectionRelationship[currentIndex] = str(mapIndex)
+                ConnectionRelationship.append([currentIndex,str(mapIndex)])
                 mapName[NameQueue[0]] = str(mapIndex)
                 NameList.append(NameQueue[0])
                 mapIndex = mapIndex+1
             else:
                 url = "https://www.baidu.com"+UrlQueue[0]
+                url = quote(url, safe='/:?=&$@+,;%')
                 web = SpiderLib.visitByLocalNet(url)
                 # 查询百度百科数据然后进行存储
                 matchlistbaike = re.findall(reqBaike, web.data.decode("UTF-8"), re.S)
                 urlbaike = "https://baike.baidu.com" + matchlistbaike[0]
+                urlbaike = quote(urlbaike,safe='/:?=&$@+,;%')
                 info = GetBaikeData(urlbaike, mapIndex)
                 MongoDB.insertDictionary("Network", "Information", info)
                 #添加边
-                ConnectionRelationship[currentIndex] = str(mapIndex)
+                ConnectionRelationship.append([currentIndex,str(mapIndex)])
                 mapName[NameQueue[0]] = str(mapIndex)
                 NameList.append(NameQueue[0])
                 mapIndex = mapIndex+1
@@ -109,10 +125,11 @@ def Begin(url):
                 UrlQueue = UrlQueue + matchlistUrl
             del NameQueue[0]
             del UrlQueue[0]
-
-
+    MongoDB.insertDictionary("Network","Map",mapName)
+    MongoDB.insertlist("Network","Relation",ConnectionRelationship)
 
 def GetBaikeData(url,id):
+    print(url)
     web = SpiderLib.visitByLocalNet(url)
     reqBasicInfo = r'<div class="basic-info cmn-clearfix">(.+?)</div>'
     matchlistBasicInfo = re.findall(reqBasicInfo,web.data.decode("UTF-8"),re.S)
@@ -120,16 +137,19 @@ def GetBaikeData(url,id):
         reqName = r'<dt class="basicInfo-item name">(.+?)</dt>'
         reqValue = r'<dd class="basicInfo-item value">(.+?)</dd>'
         # 带链接关键词的获取
-        reqBluePart = r'<a target="_blank" href="/item/.+?">(.+?)</a>'
         matchlistKey = re.findall(reqName,data,re.S)
         matchlistValue = re.findall(reqValue,data,re.S)
         if len(matchlistKey) > len(matchlistValue):
             length = len(matchlistKey)
             for index in range(0, length):
+                print(length)
+                print(index)
                 if index != length - 1:
                     if matchlistKey[index] == matchlistKey[index + 1]:
                         del matchlistKey[index]
                         length = length - 1
+                        if index == length - 1:
+                            break
                     continue
                 break
         resultDiction = {'id':str(id)}
@@ -147,7 +167,6 @@ def GetBaikeData(url,id):
                     valuelist = []
                     for value in datalist:
                         result = re.sub(rer, "", value)
-                        result = re.sub(r'<a.+?</a>', "", result)
                         result = re.sub(r'<.+?>', "", result)
                         result = re.sub(r'\n', "", result)
                         valuelist.append(result)
@@ -156,7 +175,6 @@ def GetBaikeData(url,id):
                 valuelist = []
                 for value in datalist:
                     result = re.sub(rer, "", value)
-                    result = re.sub(r'<a.+?</a>', "", result)
                     result = re.sub(r'<.+?>', "", result)
                     result = re.sub(r'\n', "", result)
                     valuelist.append(result)

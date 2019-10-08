@@ -69,21 +69,33 @@ def visitByProxy(url):
 直接通过本地IP访问 获取html 
 无Referer
 '''
+# def visitByLocalNet(url):
+#     try:
+#         web = http.request('GET', url,
+#                            headers={
+#                                'User-Agent':
+#                                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36 LBBROWSER'
+#                                , 'accept-language': "zh-CN,zh;q=0.9,zh-TW;q=0.8"
+#                            },
+#                            )
+#         print(web.status)
+#     except BaseException:
+#         print("error"+url)
+#         return "error"
+#     else:
+#         return web
+
+
 def visitByLocalNet(url):
-    try:
-        web = http.request('GET', url,
-                           headers={
-                               'User-Agent':
-                                   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36 LBBROWSER'
-                               , 'accept-language': "zh-CN,zh;q=0.9,zh-TW;q=0.8"
-                           },
-                           )
-        print(web.status)
-    except BaseException:
-        print("error"+url)
-        return "error"
-    else:
-        return web
+    web = http.request('GET', url,
+                       headers={
+                           'User-Agent':
+                               'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36 LBBROWSER'
+                           , 'accept-language': "zh-CN,zh;q=0.9,zh-TW;q=0.8"
+                       },
+                       )
+    print(web.status)
+    return web
 
 
 '''
