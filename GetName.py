@@ -64,9 +64,9 @@ def Begin(url):
     ####获取相关节点
     matchlistName = re.findall(reqName, web.data.decode("UTF-8"), re.S)
     matchlistUrl = re.findall(reqUrl, web.data.decode("UTF-8"), re.S)
-    #由于url的格式相同 会获取下方热搜的url 导致混淆 
+    #由于url的格式相同 会获取下方热搜的url 导致混淆 er
     for i in range(len(matchlistName),len(matchlistUrl)):
-        del matchlistUrl[i]
+        del matchlistUrl[len(matchlistName)]
     ConnectLength.append(len(matchlistName))
     NameQueue = NameQueue + matchlistName
     UrlQueue = UrlQueue + matchlistUrl
@@ -87,7 +87,7 @@ def Begin(url):
                 indexB = mapName[NameQueue[0]]
                 ConnectionRelationship.append([currentIndex,indexB])
             elif mapIndex>10:
-                time.sleep(random.randint(1, 3))
+                time.sleep(random.randint(10, 30))
                 url = "https://www.baidu.com" + UrlQueue[0]
                 print(NameQueue[0])
                 print(UrlQueue[0])
@@ -105,6 +105,7 @@ def Begin(url):
                 NameList.append(NameQueue[0])
                 mapIndex = mapIndex+1
             else:
+                time.sleep(random.randint(10, 30))
                 url = "https://www.baidu.com"+UrlQueue[0]
                 url = quote(url, safe='/:?=&$@+,;%')
                 web = SpiderLib.visitByLocalNet(url)
@@ -122,6 +123,9 @@ def Begin(url):
                 #添加该人物的相关人物 4个list
                 matchlistName = re.findall(reqName, web.data.decode("UTF-8"), re.S)
                 matchlistUrl = re.findall(reqUrl, web.data.decode("UTF-8"), re.S)
+                # 由于url的格式相同 会获取下方热搜的url 导致混淆 er
+                for i in range(len(matchlistName), len(matchlistUrl)):
+                    del matchlistUrl[len(matchlistName)]
                 ConnectLength.append(len(matchlistName))
                 CurrentName.append(NameQueue[0])
                 NameQueue = NameQueue + matchlistName
