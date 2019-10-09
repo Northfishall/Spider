@@ -87,15 +87,24 @@ def visitByProxy(url):
 
 
 def visitByLocalNet(url):
-    web = http.request('GET', url,
-                       headers={
-                           'User-Agent':
-                               'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36 LBBROWSER'
-                           , 'accept-language': "zh-CN,zh;q=0.9,zh-TW;q=0.8"
-                       },
-                       )
-    print(web.status)
-    return web
+    i = 0
+    while i < 3:
+        try:
+            web = http.request('GET', url,
+                               headers={
+                                   'User-Agent':
+                                       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36 LBBROWSER'
+                                   , 'accept-language': "zh-CN,zh;q=0.9,zh-TW;q=0.8"
+                               },
+                               timeout = 20
+                               )
+            print(web.status)
+            return web
+        except requests.exceptions.RequestException as e:
+            print(e)
+            print("retry "+i)
+            i = i +1
+    return "error"
 
 
 '''

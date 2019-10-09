@@ -71,8 +71,6 @@ def Begin(url):
     NameQueue = NameQueue + matchlistName
     UrlQueue = UrlQueue + matchlistUrl
     while 1==1:
-        print(mapName)
-        print(ConnectionRelationship)
         if len(NameQueue)==0 :
             break
         time.sleep(random.randint(2,10))
@@ -82,12 +80,14 @@ def Begin(url):
         del CurrentName[0]
         del ConnectLength[0]
         for i in range(0,currentLength):
+            print(mapName)
+            print(ConnectionRelationship)
             if NameQueue[0] in NameList:
                 ###之前已经获取过数据所以直接添加边即可
                 indexB = mapName[NameQueue[0]]
                 ConnectionRelationship.append([currentIndex,indexB])
-            elif mapIndex>10:
-                time.sleep(random.randint(10, 30))
+            elif mapIndex>50:
+                time.sleep(random.randint(10, 60))
                 url = "https://www.baidu.com" + UrlQueue[0]
                 print(NameQueue[0])
                 print(UrlQueue[0])
@@ -95,27 +95,39 @@ def Begin(url):
                 web = SpiderLib.visitByLocalNet(url)
                 # 查询百度百科数据然后进行存储
                 matchlistbaike = re.findall(reqBaike, web.data.decode("UTF-8"), re.S)
-                urlbaike = "https://baike.baidu.com" + matchlistbaike[0]
-                urlbaike = quote(urlbaike,safe='/:?=&$@+,;%')
-                info = GetBaikeData(urlbaike, mapIndex)
-                MongoDB.insertDictionary("Network", "Information", info)
-                #添加边
+                if len(matchlistbaike)==0:
+                    #没有对应的百度百科词条
+                    info = {"id":mapIndex}
+                    MongoDB.insertDictionary("Network","Information",info)
+                else:
+                    urlbaike = "https://baike.baidu.com" + matchlistbaike[0]
+                    urlbaike = quote(urlbaike,safe='/:?=&$@+,;%')
+                    info = GetBaikeData(urlbaike, mapIndex)
+                    MongoDB.insertDictionary("Network", "Information", info)
+                    #添加边
                 ConnectionRelationship.append([currentIndex,str(mapIndex)])
                 mapName[NameQueue[0]] = str(mapIndex)
                 NameList.append(NameQueue[0])
                 mapIndex = mapIndex+1
             else:
-                time.sleep(random.randint(10, 30))
+                time.sleep(random.randint(10, 60))
+                print(NameQueue[0])
+                print(UrlQueue[0])
                 url = "https://www.baidu.com"+UrlQueue[0]
                 url = quote(url, safe='/:?=&$@+,;%')
                 web = SpiderLib.visitByLocalNet(url)
                 # 查询百度百科数据然后进行存储
                 matchlistbaike = re.findall(reqBaike, web.data.decode("UTF-8"), re.S)
-                urlbaike = "https://baike.baidu.com" + matchlistbaike[0]
-                urlbaike = quote(urlbaike,safe='/:?=&$@+,;%')
-                info = GetBaikeData(urlbaike, mapIndex)
-                MongoDB.insertDictionary("Network", "Information", info)
-                #添加边
+                if len(matchlistbaike)==0:
+                    #没有对应的百度百科词条
+                    info = {"id":mapIndex}
+                    MongoDB.insertDictionary("Network","Information",info)
+                else:
+                    urlbaike = "https://baike.baidu.com" + matchlistbaike[0]
+                    urlbaike = quote(urlbaike,safe='/:?=&$@+,;%')
+                    info = GetBaikeData(urlbaike, mapIndex)
+                    MongoDB.insertDictionary("Network", "Information", info)
+                #添加id以及边
                 ConnectionRelationship.append([currentIndex,str(mapIndex)])
                 mapName[NameQueue[0]] = str(mapIndex)
                 NameList.append(NameQueue[0])
@@ -126,10 +138,13 @@ def Begin(url):
                 # 由于url的格式相同 会获取下方热搜的url 导致混淆 er
                 for i in range(len(matchlistName), len(matchlistUrl)):
                     del matchlistUrl[len(matchlistName)]
-                ConnectLength.append(len(matchlistName))
-                CurrentName.append(NameQueue[0])
-                NameQueue = NameQueue + matchlistName
-                UrlQueue = UrlQueue + matchlistUrl
+                if len(matchlistName)==0:
+                    print("no relationNode")
+                else:
+                    ConnectLength.append(len(matchlistName))
+                    CurrentName.append(NameQueue[0])
+                    NameQueue = NameQueue + matchlistName
+                    UrlQueue = UrlQueue + matchlistUrl
             del NameQueue[0]
             del UrlQueue[0]
     MongoDB.insertDictionary("Network","Map",mapName)
