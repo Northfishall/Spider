@@ -150,11 +150,31 @@ def Begin(url):
     MongoDB.insertDictionary("Network","Map",mapName)
     MongoDB.insertlist("Network","Relation",ConnectionRelationship)
 
+
+'''
+<dd id="open-tag-item">
+<span class="taglist">
+文学家
+</span>
+，<span class="taglist">
+人物
+</span>
+</dd>
+'''
 def GetBaikeData(url,id):
     print(url)
     web = SpiderLib.visitByLocalNet(url)
     reqBasicInfo = r'<div class="basic-info cmn-clearfix">(.+?)</div>'
+    reqTag = r'<span class="taglist">\n(.+?)\n</span>'
+    resultDiction = {'id': str(id)}
+    matchlistTag = re.findall(reqTag,web.data.decode("UTF-8"),re.S)
+    if len(matchlistTag)==0:
+        resultDiction['tag']=['Null']
+    else:
+        resultDiction['tag']=matchlistTag
     matchlistBasicInfo = re.findall(reqBasicInfo,web.data.decode("UTF-8"),re.S)
+    if len(matchlistBasicInfo)==0:
+        return resultDiction
     for data in matchlistBasicInfo:
         reqName = r'<dt class="basicInfo-item name">(.+?)</dt>'
         reqValue = r'<dd class="basicInfo-item value">(.+?)</dd>'
@@ -174,7 +194,6 @@ def GetBaikeData(url,id):
                             break
                     continue
                 break
-        resultDiction = {'id':str(id)}
         rer = r'<a target="_blank" href="/item/.+?">'
         reexp = r'dd class="basicInfo-item value">(.+?)<a class="toggle toCollapse">'
         for i, j in zip(matchlistKey, matchlistValue):

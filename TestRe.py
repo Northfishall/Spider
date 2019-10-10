@@ -134,6 +134,17 @@ Tsien Hsue-shen(<a target="_blank" href="/item/%E9%9F%A6%E6%B0%8F%E6%8B%BC%E9%9F
 </dd>
 </dl></div>'''
 
+targe = '''
+<dd id="open-tag-item">
+<span class="taglist">
+文学家
+</span>
+，<span class="taglist">
+人物
+</span>
+</dd>
+'''
+
 '''
 range 边界变化test
 ###########结论############
@@ -144,57 +155,67 @@ for i in range(0,test):
     print(i)
 print(test)
 '''
-reqName = r'<dt class="basicInfo-item name">(.+?)</dt>'
-reqValue = r'<dd class="basicInfo-item value">(.+?)</dd>'
-# 带链接关键词的获取
-reqBluePart = r'<a target="_blank" href="/item/.+?">(.+?)</a>'
+def GetTag():
+    req = r'<span class="taglist">\n(.+?)\n</span>'
+    result = re.findall(req,targe,re.S)
+    ArrayL = []
+    for i in result :
+        ArrayL.append(i)
+    print(ArrayL)
+GetTag()
 
-resultDiction = {'key':'value'}
+def Getbaike():
+    reqName = r'<dt class="basicInfo-item name">(.+?)</dt>'
+    reqValue = r'<dd class="basicInfo-item value">(.+?)</dd>'
+    # 带链接关键词的获取
+    reqBluePart = r'<a target="_blank" href="/item/.+?">(.+?)</a>'
 
-matchlistKey = re.findall(reqName, data, re.S)
-matchlistValue = re.findall(reqValue, data, re.S)
-if len(matchlistKey)>len(matchlistValue):
-    length = len(matchlistKey)
-    for index in range(0,length):
-        print(length)
-        print(index)
-        if index!=length-1:
-            if matchlistKey[index]==matchlistKey[index+1]:
-                del matchlistKey[index]
-                length = length - 1
-            continue
-        break
+    resultDiction = {'key':'value'}
 
-rer = r'<a target="_blank" href="/item/.+?">'
-reexp = r'dd class="basicInfo-item value">(.+?)<a class="toggle toCollapse">'
-for i , j in zip(matchlistKey,matchlistValue):
-    print(i)
-    print(j)
-    rekey = r'&nbsp;'
-    key = re.sub(rekey," ",i)
-    valueExp = re.findall(reexp,j,re.S)
-    if len(valueExp)!=0:
-        for valueExp in valueExp:
-            datalist = valueExp.split('<br>')
-            valuelist=[]
+    matchlistKey = re.findall(reqName, data, re.S)
+    matchlistValue = re.findall(reqValue, data, re.S)
+    if len(matchlistKey)>len(matchlistValue):
+        length = len(matchlistKey)
+        for index in range(0,length):
+            print(length)
+            print(index)
+            if index!=length-1:
+                if matchlistKey[index]==matchlistKey[index+1]:
+                    del matchlistKey[index]
+                    length = length - 1
+                continue
+            break
+
+    rer = r'<a target="_blank" href="/item/.+?">'
+    reexp = r'dd class="basicInfo-item value">(.+?)<a class="toggle toCollapse">'
+    for i , j in zip(matchlistKey,matchlistValue):
+        print(i)
+        print(j)
+        rekey = r'&nbsp;'
+        key = re.sub(rekey," ",i)
+        valueExp = re.findall(reexp,j,re.S)
+        if len(valueExp)!=0:
+            for valueExp in valueExp:
+                datalist = valueExp.split('<br>')
+                valuelist=[]
+                for value in datalist:
+                    result = re.sub(rer, "", value)
+                    result = re.sub(r'<a.+?</a>', "", result)
+                    result = re.sub(r'<.+?>', "", result)
+                    result = re.sub(r'\n', "", result)
+                    valuelist.append(result)
+        else:
+            datalist = j.split('<br>')
+            valuelist = []
             for value in datalist:
                 result = re.sub(rer, "", value)
                 result = re.sub(r'<a.+?</a>', "", result)
-                result = re.sub(r'<.+?>', "", result)
-                result = re.sub(r'\n', "", result)
+                result = re.sub(r'<.+?>',"",result)
+                result = re.sub(r'\n',"",result)
                 valuelist.append(result)
-    else:
-        datalist = j.split('<br>')
-        valuelist = []
-        for value in datalist:
-            result = re.sub(rer, "", value)
-            result = re.sub(r'<a.+?</a>', "", result)
-            result = re.sub(r'<.+?>',"",result)
-            result = re.sub(r'\n',"",result)
-            valuelist.append(result)
-    resultDiction[key]=valuelist
+        resultDiction[key]=valuelist
 
-print(resultDiction)
+    print(resultDiction)
 '''
 rer = r'<a target="_blank" href="/item/.+?">'
 test = re.findall(rer,data,re.S)
