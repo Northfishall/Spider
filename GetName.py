@@ -168,10 +168,19 @@ def GetBaikeData(url,id):
     reqTag = r'<span class="taglist">\n(.+?)\n</span>'
     resultDiction = {'id': str(id)}
     matchlistTag = re.findall(reqTag,web.data.decode("UTF-8"),re.S)
+    print(matchlistTag)
     if len(matchlistTag)==0:
         resultDiction['tag']=['Null']
     else:
-        resultDiction['tag']=matchlistTag
+        Tags = []
+        for i in matchlistTag:
+            reT = r'<a target="_blank" href=.+?">(.+?)</a>'
+            tags = re.findall(reT,i,re.S)
+            if len(tags)!=0:
+                Tags.append(tags[0])
+            else:
+                Tags.append(i)
+        resultDiction['tag']=Tags
     matchlistBasicInfo = re.findall(reqBasicInfo,web.data.decode("UTF-8"),re.S)
     if len(matchlistBasicInfo)==0:
         return resultDiction
